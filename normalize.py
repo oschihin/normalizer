@@ -62,8 +62,8 @@ def parse_arguments():
     parser.add_argument(
         "--batch-size", 
         type=int, 
-        default=20,
-        help="Anzahl der Zeilen pro API-Anfrage (Standard: 20)"
+        default=10,
+        help="Anzahl der Zeilen pro API-Anfrage (Standard: 10)"
     )
     return parser.parse_args()
 

@@ -140,5 +140,5 @@ Sie können das Verhalten des Skripts über Befehlszeilenparameter steuern:
 python normalize.py --help
 ```
 
-* `--model`: Bestimmt das zu verwendende Gemini-Modell. Standard ist `gemini-2.5-flash`.
-* `--batch-size`: Bestimmt, wie viele CSV-Zeilen pro API-Aufruf verarbeitet werden (Standard: 20). Ein niedrigerer Wert reduziert Speicheranforderungen und vermeidet Timeout-Probleme, ein höherer Wert ist schneller.
+* `--model`: Bestimmt das zu verwendende Gemini-Modell. Standard ist `gemini-2.5-flash`, soll besser in `.env` gesetzt werden.
+* `--batch-size`: Bestimmt, wie viele CSV-Zeilen pro API-Aufruf verarbeitet werden (Standard: 10). Ein niedrigerer Wert reduziert Speicheranforderungen und vermeidet Timeout-Probleme, ein höherer Wert ist schneller.

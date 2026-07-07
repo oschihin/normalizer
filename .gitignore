@@ -20,6 +20,7 @@ env/
 ENV/
 lib/
 lib64/
+lib64
 MANIFEST
 parts/
 pyvenv.cfg
