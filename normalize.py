@@ -16,7 +16,19 @@ import json
 import argparse
 from typing import List, Dict, Any
 
-# Wir importieren das offizielle google-genai SDK
+# Wir importieren das offizielle google-genai SDK und python-dotenv falls vorhanden
+try:
+    from dotenv import load_dotenv
+    # Lade die .env Datei vorzugsweise aus dem Verzeichnis, in dem dieses Skript liegt
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    env_path = os.path.join(script_dir, ".env")
+    if os.path.exists(env_path):
+        load_dotenv(env_path)
+    else:
+        load_dotenv()
+except ImportError:
+    pass
+
 try:
     from google import genai
     from google.genai import types
@@ -38,10 +50,14 @@ def parse_arguments():
         "output_file", 
         help="Pfad zur Ausgabe-CSV-Datei, in der die strukturierten Daten gespeichert werden"
     )
+    
+    # Standardmodell aus Umgebungsvariable MODEL oder Fallback
+    default_model = os.environ.get("MODEL", "gemini-2.5-flash")
+    
     parser.add_argument(
         "--model", 
-        default="gemini-2.5-flash",
-        help="Das zu verwendende Gemini-Modell (Standard: gemini-2.5-flash)"
+        default=default_model,
+        help=f"Das zu verwendende Gemini-Modell (Standard: {default_model})"
     )
     parser.add_argument(
         "--batch-size", 

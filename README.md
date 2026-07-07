@@ -25,30 +25,38 @@ Installiere das offizielle Google GenAI SDK:
 pip install -r requirements.txt
 ```
 
-### 3. API-Key setzen
-Lege den Gemini API-Key im Terminal fest:
+### 3. Konfiguration (.env-Datei)
+Erstelle eine Datei namens `.env` im selben Verzeichnis wie das Skript. Siehe aus Beispiel auch `.env.example`:
+
+```env
+GEMINI_API_KEY="[Dein_API_Key_Hier]"
+MODEL="gemini-2.5-flash"
+```
+
+*Alternativ:* Lege den Gemini API-Key manuell im Terminal fest:
 
 * **Linux / macOS:**
-
+* 
   ```bash
-  export GEMINI_API_KEY="Ihr_API_Key_Hier"
+  export GEMINI_API_KEY="Dein_API_Key_Hier"
   ```
+* 
 * **Windows (PowerShell):**
-
+  
   ```powershell
-  $env:GEMINI_API_KEY="Ihr_API_Key_Hier"
+  $env:GEMINI_API_KEY="Dein_API_Key_Hier"
   ```
+* 
 * **Windows (Eingabeaufforderung / CMD):**
-
+  
   ```cmd
-  set GEMINI_API_KEY=Ihr_API_Key_Hier
+  set GEMINI_API_KEY=Dein_API_Key_Hier
   ```
 
 ### 4. Skript ausführen
-Verarbeite die  CSV-Datei:
-
+Verarbeite deine CSV-Datei (z. B. im Unterordner `data`):
 ```bash
-python normalize.py input.csv output.csv
+python normalize.py data/input.csv data/output.csv
 ```
 
 ---
@@ -58,25 +66,63 @@ python normalize.py input.csv output.csv
 Wenn du Python nicht lokal installieren möchtest, kannst du das Tool direkt in Docker ausführen.
 
 ### 1. Docker-Image bauen
-
 ```bash
 docker build -t csv-normalizer .
 ```
 
 ### 2. Container ausführen
-Gebe den API-Key an und hänge das Verzeichnis für die CSV-Dateien als Volume ein:
+
+Da deine Eingabe- und Ausgabedaten im Unterordner `./data` liegen und `.env` im Hauptverzeichnis (Appdir) liegt, gibt es zwei  Möglichkeiten:
+
+#### Option A: Gesamten Hauptordner einbinden (Empfohlen & am einfachsten)
+Hierbei bindest du das gesamte Projektverzeichnis nach `/app` im Container ein. Dadurch wird das lokale `.env` sowie der Unterordner `data` im Container sichtbar, und das Skript lädt `.env` automatisch:
 
 * **Linux / macOS:**
-
   ```bash
-  docker run -rm \
-    -e GEMINI_API_KEY="Ihr_API_Key_Hier" \
-    -v "$(pwd)":/data \
-    csv-normalizer /data/input.csv /data/output.csv
+  docker run --rm \
+    -v "$(pwd)":/app \
+    csv-normalizer data/input.csv data/output.csv
+  ```
+* **Windows (PowerShell):**
+  ```powershell
+  docker run --rm `
+    -v "${PWD}:/app" `
+    csv-normalizer data/input.csv data/output.csv
+  ```
+
+#### Option B: Nur den `./data` Unterordner einbinden
+Du bindest nur das Verzeichnis `./data` ein und übergibst das `.env` im Appdir über den `--env-file` Parameter von Docker:
+
+* **Linux / macOS:**
+  
+  ```bash
+  docker run --rm \
+    --env-file .env \
+    -v "$(pwd)/data":/app/data \
+    csv-normalizer data/input.csv data/output.csv
   ```
 
 * **Windows (PowerShell):**
 
+  ```powershell
+  docker run --rm `
+    --env-file .env `
+    -v "${PWD}/data:/app/data" `
+    csv-normalizer data/input.csv data/output.csv
+  ```
+
+#### Option C: Direkte Übergabe der Umgebungsvariablen
+Gib den API-Key manuell beim Ausführen des Containers an und binde nur den `./data` Ordner ein:
+
+* **Linux / macOS:**
+  ```bash
+  docker run --rm \
+    -e GEMINI_API_KEY="Ihr_API_Key_Hier" \
+    -v "$(pwd)/data":/app/data \
+    csv-normalizer data/input.csv data/output.csv
+  ```
+
+* **Windows (PowerShell):**
   ```powershell
   docker run --rm `
     -e GEMINI_API_KEY="Ihr_API_Key_Hier" `
@@ -88,7 +134,7 @@ Gebe den API-Key an und hänge das Verzeichnis für die CSV-Dateien als Volume e
 
 ## 🛠️ CLI-Optionen
 
-Du kannst das Verhalten des Skripts über Befehlszeilenparameter steuern:
+Sie können das Verhalten des Skripts über Befehlszeilenparameter steuern:
 
 ```bash
 python normalize.py --help
